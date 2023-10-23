@@ -1,0 +1,10 @@
+Document: python-bytecode
+Title: Python bytecode Manual
+Author: Victor Stinner and Matthieu C. Dartiailh
+Abstract: This manual describes the bytecode Python package for
+ generating, modifying and optimizing Python bytecode
+Section: Programming/Python
+
+Format: HTML
+Index: /usr/share/doc/python3-bytecode/html/index.html
+Files: /usr/share/doc/python3-bytecode/html/*.html

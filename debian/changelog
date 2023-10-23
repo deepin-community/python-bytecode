@@ -1,5 +1,55 @@
-template-repository (1.0-1) unstable; urgency=medium
+python-bytecode (0.15.1-1) unstable; urgency=medium
 
-  * Initial release
+  * New upstream version 0.15.1
+  * INTRINSIC patch now incorporated upstream
 
- -- Tsic404 <liuheng@deepin.org>  Sat, 28 Jan 2023 13:46:49 +0800
+ -- Julian Gilbey <jdg@debian.org>  Fri, 13 Oct 2023 12:09:46 +0100
+
+python-bytecode (0.15.0-1) unstable; urgency=medium
+
+  * New upstream version 0.15.0
+  * Add patch to fix spelling of "INTRINSIC"
+
+ -- Julian Gilbey <jdg@debian.org>  Thu, 12 Oct 2023 17:23:45 +0100
+
+python-bytecode (0.14.2-1) unstable; urgency=medium
+
+  * New upstream version
+
+ -- Julian Gilbey <jdg@debian.org>  Fri, 23 Jun 2023 06:30:22 +0100
+
+python-bytecode (0.14.0-2) unstable; urgency=medium
+
+  * Team upload.
+  * Fix offset patch
+  * Add Multi-Arch according to MA hinter
+  * Bump policy version (no changes)
+
+ -- Jochen Sprickerhof <jspricke@debian.org>  Mon, 19 Dec 2022 15:27:41 +0100
+
+python-bytecode (0.14.0-1) unstable; urgency=medium
+
+  * Team upload.
+  * New upstream version 0.14.0 (Closes: #1025026)
+  * Remove note from d/copyright (fixed upstream)
+  * Rebase patches
+  * Add pybuild testsuite
+  * Move package description to source package
+  * Use dh-sequence-sphinxdoc
+  * Add patch for doc generation
+  * Use d/clean
+  * Use pyproject and setuptools-scm
+
+ -- Jochen Sprickerhof <jspricke@debian.org>  Wed, 14 Dec 2022 21:11:40 +0100
+
+python-bytecode (0.13.0-2) unstable; urgency=medium
+
+  * Source-only upload
+
+ -- Julian Gilbey <jdg@debian.org>  Sun, 26 Jun 2022 18:22:38 +0100
+
+python-bytecode (0.13.0-1) unstable; urgency=medium
+
+  * Initial release (Closes: #1005267)
+
+ -- Julian Gilbey <jdg@debian.org>  Sun, 26 Jun 2022 10:52:55 +0100
