@@ -1,0 +1,103 @@
+From: Fabio Zadrozny <fabiofz@gmail.com>
+Date: Wed, 14 Dec 2022 19:47:25 +0100
+Subject: Add offset to instructions from bytecode library.
+
+Last-Update: 2021-04-10
+Origin: https://github.com/fabioz/PyDev.Debugger/commit/ab9958b70c69f14e69fda6023ec26106b921b13d
+Forwarded: not-needed
+
+ This is based on the pydevd patch referenced in the Origin field, but
+ simplified to produce the minimum possible patch.
+---
+ src/bytecode/concrete.py | 15 +++++++++++----
+ src/bytecode/instr.py    |  6 ++++--
+ 2 files changed, 15 insertions(+), 6 deletions(-)
+
+--- a/src/bytecode/concrete.py
++++ b/src/bytecode/concrete.py
+@@ -79,7 +79,7 @@
+     # For ConcreteInstr the argument is always an integer
+     _arg: int
+ 
+-    __slots__ = ("_size", "_extended_args")
++    __slots__ = ("_size", "_extended_args", "offset")
+ 
+     def __init__(
+         self,
+@@ -89,12 +89,14 @@
+         lineno: Union[int, None, _UNSET] = UNSET,
+         location: Optional[InstrLocation] = None,
+         extended_args: Optional[int] = None,
++        offset: Optional[int] = None,
+     ):
+         # Allow to remember a potentially meaningless EXTENDED_ARG emitted by
+         # Python to properly compute the size and avoid messing up the jump
+         # targets
+         self._extended_args = extended_args
+-        super().__init__(name, arg, lineno=lineno, location=location)
++        self.offset = offset
++        super().__init__(name, arg, lineno=lineno, location=location, offset=offset)
+ 
+     def _check_arg(self, name: str, opcode: int, arg: int) -> None:
+         if opcode_has_argument(opcode):
+@@ -174,7 +176,11 @@
+         else:
+             arg = UNSET
+         name = _opcode.opname[op]
+-        return cls(name, arg, lineno=lineno)
++        # fabioz: added offset to ConcreteBytecode
++        # Need to keep an eye on https://github.com/MatthieuDartiailh/bytecode/issues/48 in
++        # case the library decides to add this in some other way.
++        return cls(name, arg, lineno=lineno, offset=index)
++
+ 
+     def use_cache_opcodes(self) -> int:
+         return (
+@@ -770,6 +776,7 @@
+                     arg,
+                     location=instr.location,
+                     extended_args=nb_extended_args,
++                    offset=instr.offset,
+                 )
+                 instructions[index] = instr
+                 nb_extended_args = 0
+@@ -1058,7 +1065,7 @@
+                     instr_index = len(instructions)
+                     jumps.append((instr_index, jump_target))
+ 
+-                instructions.append(Instr(c_instr.name, arg, location=location))
++                instructions.append(Instr(c_instr.name, arg, location=location, offset=c_instr.offset))
+ 
+             # We now insert the TryEnd entries
+             if current_instr_offset in ex_end:
+--- a/src/bytecode/instr.py
++++ b/src/bytecode/instr.py
+@@ -522,7 +522,7 @@
+ class BaseInstr(Generic[A]):
+     """Abstract instruction."""
+ 
+-    __slots__ = ("_name", "_opcode", "_arg", "_location")
++    __slots__ = ("_name", "_opcode", "_arg", "_location", "offset")
+ 
+     # Work around an issue with the default value of arg
+     def __init__(
+@@ -532,8 +532,10 @@
+         *,
+         lineno: Union[int, None, _UNSET] = UNSET,
+         location: Optional[InstrLocation] = None,
++        offset: Optional[InstrLocation] = None,
+     ) -> None:
+         self._set(name, arg)
++        self.offset = offset
+         if location:
+             self._location = location
+         elif lineno is UNSET:
+@@ -658,7 +660,7 @@
+             return (_effect, 0)
+ 
+     def copy(self: T) -> T:
+-        return self.__class__(self._name, self._arg, location=self._location)
++        return self.__class__(self._name, self._arg, location=self._location, offset=self.offset)
+ 
+     def has_jump(self) -> bool:
+         return self._has_jump(self._opcode)

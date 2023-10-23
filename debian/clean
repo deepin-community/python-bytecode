@@ -1,0 +1,3 @@
+doc/build/
+src/bytecode.egg-info/
+src/bytecode/version.py

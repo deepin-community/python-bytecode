@@ -1,4 +1,28 @@
 #!/usr/bin/make -f
 
+include /usr/share/dpkg/pkg-info.mk
+
+export SETUPTOOLS_SCM_PRETEND_VERSION = $(VERSION_UPSTREAM)
+
+export PYBUILD_NAME=bytecode
+
+export PYBUILD_TEST_PYTEST=1
+export PYBUILD_TEST_ARGS=-k "not test_version"
+
 %:
-	dh $@
+	dh $@ --buildsystem=pybuild
+
+ifeq (,$(findstring nodoc,$(DEB_BUILD_OPTIONS)))
+execute_after_dh_auto_build:
+	PYTHONPATH=$(CURDIR) $(MAKE) -C doc SPHINXBUILD=sphinx-build html
+
+execute_after_dh_auto_clean:
+	$(MAKE) -C doc SPHINXBUILD=sphinx-build clean
+
+override_dh_installdocs:
+	dh_installdocs -ppython-bytecode-doc --doc-main-package=python3-bytecode
+	dh_installdocs --remaining-packages
+endif
+
+override_dh_compress:
+	dh_compress -O--buildsystem=pybuild -Xchangelog.html
